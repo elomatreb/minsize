@@ -15,6 +15,10 @@ With the basic first level of const generics support (historically known as `min
 This crate uses an indirection through a trait, that for now is implemented by hand for a small number of useful values.
 Once the necessary language features are stabilized, this list of manual implementations will be replaced with a proper blanket implementation.
 
+#### Crate features
+
+- `serde`: Add implementations for the [`serde`](https://crates.io/crates/serde) traits
+
 ## License
 
 Licensed under either of

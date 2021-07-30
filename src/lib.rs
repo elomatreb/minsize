@@ -8,6 +8,10 @@
 #![forbid(unsafe_code)]
 
 //! Collections with a statically known minimum size.
+//!
+//! # Crate features
+//!
+//! - `serde`: Add implementations for the [`serde`](https://crates.io/crates/serde) traits
 
 use std::{
     cmp,
@@ -761,5 +765,65 @@ impl<T, const N: usize> TryFrom<Vec<T>> for MinSizedVec<T, N> {
         } else {
             Err(value)
         }
+    }
+}
+
+#[cfg(any(feature = "serde", test))]
+mod serde_impl {
+    use super::*;
+    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+
+    impl<T, const N: usize> Serialize for MinSizedVec<T, N>
+    where
+        T: Serialize,
+    {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            serializer.collect_seq(self)
+        }
+    }
+
+    impl<'de, T, const N: usize> Deserialize<'de> for MinSizedVec<T, N>
+    where
+        T: Deserialize<'de>,
+    {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let v = <Vec<T>>::deserialize(deserializer)?;
+
+            if v.len() >= N {
+                Ok(Self(v))
+            } else {
+                Err(<D::Error>::custom(format!(
+                    "expected at least {} elements, found only {}",
+                    N,
+                    v.len()
+                )))
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn serde_serialize() {
+        let serialized = serde_json::to_string(&MinSizedVec::from([1, 2, 3])).unwrap();
+        assert_eq!(serialized, "[1,2,3]");
+    }
+
+    #[test]
+    fn serde_deserialize() {
+        let v = serde_json::from_str::<MinSizedVec<i32, 3>>("[1,2,3]").unwrap();
+        assert_eq!(v, &[1, 2, 3]);
+
+        let v = serde_json::from_str::<MinSizedVec<i32, 3>>("[1,2]");
+        assert!(v.is_err());
     }
 }
