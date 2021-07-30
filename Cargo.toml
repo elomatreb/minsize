@@ -1,0 +1,13 @@
+[package]
+name = "minsize"
+version = "0.1.0"
+edition = "2018"
+description = "Collections with a statically known minimum size (using const generics)"
+repository = "https://github.com/elomatreb/minsize"
+license = "MIT OR Apache-2.0"
+keywords = ["vec", "nonempty", "non-empty", "minimum-size", "const-generics"]
+categories = ["data-structures", "rust-patterns"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
