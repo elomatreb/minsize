@@ -311,7 +311,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
         self.0.insert(index, element);
     }
 
-    /// Remove and and return the element at the given index from the collection.
+    /// Remove and return the element at the given index from the collection.
     ///
     /// This will shift all elements after `index` to the left.
     ///
@@ -354,7 +354,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
         self.0.remove(index)
     }
 
-    /// Remove and and return the element at the given index from the collection.
+    /// Remove and return the element at the given index from the collection.
     ///
     /// This will replace the empty slot left by the removal with the last element in the
     /// collection. This does not preserve ordering, but is O(1).
@@ -482,7 +482,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
         }
     }
 
-    /// Try to change the mininum size of the collection to `NEW`.
+    /// Try to change the minimum size of the collection to `NEW`.
     ///
     /// This will inspect the current **runtime** length of the collection. If it is greater than
     /// or equal to `NEW`, a successful [`Result`] containing a collection with the updated minimum
@@ -511,7 +511,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
         self.0.capacity()
     }
 
-    /// Returs the entire collection as a slice.
+    /// Returns the entire collection as a slice.
     fn as_slice(&self) -> &[T] {
         self
     }
