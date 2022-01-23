@@ -15,7 +15,7 @@
 
 use std::{
     cmp,
-    convert::TryFrom,
+    convert::{TryFrom, TryInto},
     fmt,
     ops::{Deref, DerefMut, Index, IndexMut},
     slice::{Iter as SliceIter, IterMut as SliceIterMut, SliceIndex},
@@ -514,6 +514,34 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
     /// Returns the entire collection as a slice.
     fn as_slice(&self) -> &[T] {
         self
+    }
+
+    /// Returns a fixed-size array of the start of the collection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use minsize::MinSizedVec;
+    /// let v: MinSizedVec<_, 2> = MinSizedVec::new(vec![1, 2, 3]).unwrap();
+    ///
+    /// assert_eq!(*v.guaranteed_head(), [1, 2]);
+    /// ```
+    pub fn guaranteed_head(&self) -> &[T; MINIMUM_SIZE] {
+        self.0[..MINIMUM_SIZE].try_into().unwrap()
+    }
+
+    /// Returns a fixed-size array of the end of the collection.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use minsize::MinSizedVec;
+    /// let v: MinSizedVec<_, 2> = MinSizedVec::new(vec![1, 2, 3]).unwrap();
+    ///
+    /// assert_eq!(*v.guaranteed_tail(), [2, 3]);
+    /// ```
+    pub fn guaranteed_tail(&self) -> &[T; MINIMUM_SIZE] {
+        self.0[(self.len() - MINIMUM_SIZE)..].try_into().unwrap()
     }
 }
 
