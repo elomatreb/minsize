@@ -123,6 +123,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
     /// let v: Vec<_> = v.into_inner();
     /// assert_eq!(v, vec![1, 2, 3]);
     /// ```
+    #[must_use]
     pub fn into_inner(self) -> Vec<T> {
         self.0
     }
@@ -335,6 +336,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
     /// // This will panic, since the minimum size is 2:
     /// v.remove(1);
     /// ```
+    #[track_caller]
     pub fn remove(&mut self, index: usize) -> T {
         if index >= self.len() {
             panic!(
@@ -379,6 +381,7 @@ impl<T, const MINIMUM_SIZE: usize> MinSizedVec<T, MINIMUM_SIZE> {
     /// // This will panic, since the minimum size is 2:
     /// v.swap_remove(1);
     /// ```
+    #[track_caller]
     pub fn swap_remove(&mut self, index: usize) -> T {
         if index >= self.len() {
             panic!(
