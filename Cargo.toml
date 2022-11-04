@@ -1,6 +1,6 @@
 [package]
 name = "minsize"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Collections with a statically known minimum size (using const generics)"
 repository = "https://github.com/elomatreb/minsize"
