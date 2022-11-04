@@ -11,6 +11,7 @@
 //!
 //! # Crate features
 //!
+//! - `arbitrary`: Add support for the [`arbitrary`](https://crates.io/crates/arbitrary) crate
 //! - `serde`: Add implementations for the [`serde`](https://crates.io/crates/serde) traits
 
 use std::{
@@ -796,6 +797,35 @@ impl<T, const N: usize> TryFrom<Vec<T>> for MinSizedVec<T, N> {
         } else {
             Err(value)
         }
+    }
+}
+
+#[cfg(feature = "arbitrary")]
+impl<'a, T, const N: usize> arbitrary::Arbitrary<'a> for MinSizedVec<T, N>
+where
+    T: arbitrary::Arbitrary<'a>,
+{
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        // Generate initial minimum number of elements
+        let start = u.arbitrary::<[T; N]>()?;
+        let mut out = MinSizedVec::from(start);
+
+        // Optionally extend with more
+        let additional = u.arbitrary_len::<T>()?;
+        for _ in 0..additional {
+            out.push(u.arbitrary()?);
+        }
+
+        Ok(out)
+    }
+
+    fn size_hint(depth: usize) -> (usize, Option<usize>) {
+        arbitrary::size_hint::recursion_guard(depth, |depth| {
+            arbitrary::size_hint::and(
+                <[T; N] as arbitrary::Arbitrary>::size_hint(depth),
+                <Vec<T> as arbitrary::Arbitrary>::size_hint(depth),
+            )
+        })
     }
 }
 
